@@ -1,0 +1,89 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Swagger Poker API
+  description: API para comparar manos de poker indicando, que jugador ganaría y en su caso si alguien está haciendo trampas.
+  contact:
+    name: David Gil Baeza
+    email: davidgil.univ@gmail.com
+paths:
+  /hands:
+    post:
+      description: Compara las manos de las diferentes jugadas introducidas y determina qué jugador es el ganador y la cantidad que se lleva en base a lo acumulado y apostado en cada jugada.
+      operationId: compareHands
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Poker"
+        description: Manos a comparar.
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+components:
+  schemas:
+    Poker:
+      type: array
+      items:
+        minItems: 1
+        type: object
+        required:
+          - jugadas
+          - bote
+        properties:
+          bote:
+            type: number
+          jugadas:
+            type: array
+            items:
+              minItems: 2
+              type: object
+              required:
+                - jugador
+                - apuesta
+                - cartas
+              properties:
+                jugador:
+                  type: string
+                apuesta:
+                  type: number
+                cartas:
+                  type: array
+                  items:
+                    minItems: 5
+                    maxItems: 5
+                    type: object
+                    required:
+                      - valor
+                      - palo
+                    properties:
+                      valor:
+                        type: string
+                      palo:
+                        type: string
+    Response:
+      type: array
+      items:
+        type: string
+    ErrorModel:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
